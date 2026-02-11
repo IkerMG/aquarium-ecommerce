@@ -34,6 +34,7 @@ export default defineConfig(({ command }) => ({
   build: {
     outDir: 'dist',
     sourcemap: false,
+    assetsDir: 'assets',
     rollupOptions: {
       output: {
         manualChunks: {
