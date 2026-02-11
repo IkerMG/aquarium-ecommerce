@@ -10,7 +10,7 @@ import { AuthProvider } from './context/AuthContext';
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <AuthProvider>
-      <CartProvider> {/* <--- Esto es obligatorio */}
+      <CartProvider>
         <App />
       </CartProvider>
     </AuthProvider>
