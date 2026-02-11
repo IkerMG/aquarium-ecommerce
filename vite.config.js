@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  base: '/aquarium-ecommerce/',
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/aquarium-ecommerce/' : '/',
   plugins: [
     react({
       // Enable Fast Refresh
@@ -49,4 +49,4 @@ export default defineConfig({
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom'],
   },
-})
+}))
