@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estilos globales y reset */
+@layer base {
+    body {
+        @apply bg-neutral-50 text-neutral-900;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-heading;
+    }
+
+    /* Scrollbar personalizado */
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        @apply bg-neutral-100;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply bg-neutral-400 rounded-full;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        @apply bg-neutral-500;
+    }
+}
+
+/* Utilidades personalizadas */
+@layer utilities {
+    .text-gradient {
+        @apply bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent;
+    }
+
+    .bg-gradient-ocean {
+        @apply bg-gradient-to-r from-primary-500 to-secondary-500;
+    }
+
+    .shadow-glow {
+        box-shadow: 0 0 20px rgba(8, 145, 195, 0.3);
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .animate-slide-up {
+        animation: slideUp 0.5s ease-out;
+    }
+}
+
+/* Animaciones keyframes adicionales */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Focus visible personalizado */
+.focus-visible:focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+}

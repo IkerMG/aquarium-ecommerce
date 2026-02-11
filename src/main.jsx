@@ -1,0 +1,18 @@
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './styles/globals.css';
+
+// IMPORTS CRUCIALES
+import { CartProvider } from './context/CartContext';
+import { AuthProvider } from './context/AuthContext';
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <AuthProvider>
+      <CartProvider> {/* <--- Esto es obligatorio */}
+        <App />
+      </CartProvider>
+    </AuthProvider>
+  </React.StrictMode>
+);
