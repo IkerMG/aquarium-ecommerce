@@ -1,99 +1,135 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FiX, FiTrash2, FiShoppingBag } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiX, FiTrash2, FiShoppingBag, FiArrowRight, FiPlus, FiMinus } from 'react-icons/fi';
 import { useCart } from '../../../hooks/useCart';
 
 const MiniCart = ({ onClose }) => {
-    const { cart, cartTotal, removeFromCart } = useCart();
+  const { cart, cartTotal, cartCount, removeFromCart, updateQuantity } = useCart();
 
-    return (
-        <div className="absolute top-full right-0 mt-4 w-80 bg-neutral-900 border border-neutral-800 rounded-xl shadow-2xl z-50 overflow-hidden">
-            {/* Flechita decorativa (opcional, estilo tooltip) */}
-            <div className="absolute top-0 right-6 -mt-1.5 w-3 h-3 bg-neutral-900 border-t border-l border-neutral-800 transform rotate-45"></div>
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0, y: 10, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 8, scale: 0.97 }}
+        transition={{ duration: 0.2 }}
+        className="w-full sm:w-[340px] bg-neutral-900 border border-neutral-800 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] z-50 overflow-hidden"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-800">
+          <div className="flex items-center gap-2">
+            <FiShoppingBag className="text-accent-500" size={16} />
+            <span className="font-heading font-semibold text-white text-sm">Mi cesta</span>
+            {cartCount > 0 && (
+              <span className="text-[11px] font-bold bg-accent-500/20 text-accent-400 px-2 py-0.5 rounded-full">
+                {cartCount}
+              </span>
+            )}
+          </div>
+          <button onClick={onClose} className="text-neutral-600 hover:text-white transition-colors p-1 rounded-lg hover:bg-neutral-800">
+            <FiX size={16} />
+          </button>
+        </div>
 
-            <div className="p-4 border-b border-neutral-800 flex justify-between items-center relative z-10 bg-neutral-900">
-                <h3 className="font-bold text-white flex items-center gap-2">
-                    <FiShoppingBag className="text-accent-500" />
-                    Mi Cesta <span className="text-neutral-500 font-normal">({cart.length})</span>
-                </h3>
+        {/* Empty state */}
+        {cart.length === 0 ? (
+          <div className="p-10 text-center">
+            <div className="text-4xl mb-4">🛒</div>
+            <p className="text-neutral-500 text-sm mb-5">Tu carrito está vacío</p>
+            <Link
+              to="/categoria/acuarios"
+              onClick={onClose}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent-400 hover:text-accent-300 transition-colors"
+            >
+              Explorar productos <FiArrowRight size={12} />
+            </Link>
+          </div>
+        ) : (
+          <>
+            {/* Items */}
+            <div className="max-h-72 overflow-y-auto py-2">
+              {cart.map((item) => (
+                <motion.div
+                  key={item.id}
+                  layout
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                  className="flex gap-3 px-4 py-3 hover:bg-neutral-800/40 transition-colors group"
+                >
+                  {/* Thumb */}
+                  <div className="w-14 h-14 rounded-xl overflow-hidden bg-neutral-800 shrink-0">
+                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                  </div>
+
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-white text-xs font-medium leading-snug line-clamp-2 mb-1.5">{item.name}</h4>
+                    <div className="flex items-center justify-between">
+                      {/* Qty controls */}
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          className="w-6 h-6 rounded-lg bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
+                        >
+                          <FiMinus size={10} />
+                        </button>
+                        <span className="text-white text-xs font-semibold w-5 text-center">{item.quantity}</span>
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          className="w-6 h-6 rounded-lg bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
+                        >
+                          <FiPlus size={10} />
+                        </button>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className="font-heading font-bold text-white text-sm">
+                          {(item.price * item.quantity).toFixed(2)}€
+                        </span>
+                        <button
+                          onClick={() => removeFromCart(item.id)}
+                          className="text-neutral-700 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+                        >
+                          <FiTrash2 size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
             </div>
 
-            {cart.length === 0 ? (
-                <div className="p-8 text-center">
-                    <p className="text-neutral-500 text-sm mb-4">Tu carrito está vacío.</p>
-                    <Link
-                        to="/products" // O la ruta de tu tienda
-                        onClick={onClose}
-                        className="text-accent-400 text-sm font-bold hover:underline"
-                    >
-                        Ver productos
-                    </Link>
-                </div>
-            ) : (
-                <>
-                    {/* Lista de Items (con scroll si hay muchos) */}
-                    <div className="max-h-64 overflow-y-auto custom-scrollbar p-2">
-                        {cart.map((item) => (
-                            <div key={item.id} className="flex gap-3 p-2 hover:bg-neutral-800/50 rounded-lg transition-colors group">
-                                {/* Imagen pequeña */}
-                                <div className="w-16 h-16 bg-neutral-950 rounded-md overflow-hidden flex-shrink-0">
-                                    <img
-                                        src={item.image}
-                                        alt={item.name}
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-
-                                {/* Info */}
-                                <div className="flex-1 min-w-0 flex flex-col justify-center">
-                                    <h4 className="text-white text-sm font-medium truncate">{item.name}</h4>
-                                    <div className="flex justify-between items-center mt-1">
-                                        <p className="text-neutral-400 text-xs">
-                                            {item.quantity} x <span className="text-white font-bold">{item.price}€</span>
-                                        </p>
-                                        <button
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                removeFromCart(item.id);
-                                            }}
-                                            className="text-neutral-600 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
-                                        >
-                                            <FiTrash2 size={14} />
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Footer del MiniCart */}
-                    <div className="p-4 bg-neutral-950/50 border-t border-neutral-800">
-                        <div className="flex justify-between items-center mb-4">
-                            <span className="text-neutral-400 text-sm">Total estimado:</span>
-                            <span className="text-white font-bold text-lg">{cartTotal.toFixed(2)}€</span>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-3">
-                            <Link
-                                to="/carrito"
-                                onClick={onClose}
-                                className="flex justify-center items-center px-4 py-2 border border-neutral-700 rounded-lg text-white text-sm font-medium hover:bg-neutral-800 transition-colors"
-                            >
-                                Ver Cesta
-                            </Link>
-                            <Link
-                                to="/checkout"
-                                onClick={onClose}
-                                className="flex justify-center items-center px-4 py-2 bg-accent-600 rounded-lg text-white text-sm font-bold hover:bg-accent-500 transition-colors shadow-lg shadow-accent-900/20"
-                            >
-                                Pagar
-                            </Link>
-                        </div>
-                    </div>
-                </>
-            )}
-        </div>
-    );
+            {/* Footer */}
+            <div className="border-t border-neutral-800 p-4 bg-neutral-950/40">
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-neutral-500 text-sm">Subtotal</span>
+                <span className="font-heading font-bold text-white text-lg">{cartTotal.toFixed(2)}€</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <Link
+                  to="/carrito"
+                  onClick={onClose}
+                  className="flex items-center justify-center py-2.5 border border-neutral-700 hover:border-neutral-600 rounded-xl text-white text-xs font-semibold transition-colors"
+                >
+                  Ver cesta
+                </Link>
+                <Link
+                  to="/checkout"
+                  onClick={onClose}
+                  className="flex items-center justify-center gap-1.5 py-2.5 bg-accent-500 hover:bg-accent-400 text-neutral-950 rounded-xl text-xs font-bold transition-all hover:shadow-glow-accent-sm"
+                >
+                  Pagar <FiArrowRight size={12} />
+                </Link>
+              </div>
+              <p className="text-center text-neutral-700 text-[10px] mt-3">Envío gratuito a partir de 80€</p>
+            </div>
+          </>
+        )}
+      </motion.div>
+    </AnimatePresence>
+  );
 };
 
 export default MiniCart;

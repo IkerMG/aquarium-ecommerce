@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 
 import Layout from './components/layout/Layout';
@@ -18,9 +18,20 @@ import NotFound from './pages/NotFound';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
+  const prevPathname = useRef(null);
+
   useEffect(() => {
-    window.scrollTo(0, 0);
+    const isFilterNav =
+      pathname.startsWith('/categoria/') &&
+      prevPathname.current?.startsWith('/categoria/');
+
+    if (!isFilterNav) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    prevPathname.current = pathname;
   }, [pathname]);
+
   return null;
 };
 

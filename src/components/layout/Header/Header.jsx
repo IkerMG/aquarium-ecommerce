@@ -145,15 +145,26 @@ const Header = () => {
 
                                 <AnimatePresence>
                                     {showMiniCart && (
-                                        <motion.div
-                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                            transition={{ duration: 0.2 }}
-                                            className="absolute top-full right-0 pt-2"
-                                        >
-                                            <MiniCart onClose={() => setShowMiniCart(false)} />
-                                        </motion.div>
+                                        <>
+                                            {/* Mobile: backdrop */}
+                                            <motion.div
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                className="fixed inset-0 z-40 sm:hidden"
+                                                onClick={() => setShowMiniCart(false)}
+                                            />
+                                            {/* Mobile: centrado en pantalla / Desktop: dropdown derecha */}
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                transition={{ duration: 0.2 }}
+                                                className="fixed top-20 left-1/2 -translate-x-1/2 w-[calc(100vw-2rem)] z-50 sm:absolute sm:top-full sm:left-auto sm:translate-x-0 sm:right-0 sm:w-auto sm:pt-2 sm:fixed-none"
+                                            >
+                                                <MiniCart onClose={() => setShowMiniCart(false)} />
+                                            </motion.div>
+                                        </>
                                     )}
                                 </AnimatePresence>
                             </div>
