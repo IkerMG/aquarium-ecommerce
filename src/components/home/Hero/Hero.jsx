@@ -1,24 +1,52 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiArrowRight, FiMapPin, FiChevronDown } from 'react-icons/fi';
 
 const Hero = () => {
   const videoRef = useRef(null);
+  const [videoError, setVideoError] = useState(false);
+
+  // Fallback image if video fails to load
+  const fallbackImage = "https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=2070";
+  const posterImage = "https://images.unsplash.com/photo-1524704654690-b56c05c78a00?q=80&w=2070";
+
+  useEffect(() => {
+    // Check if video exists and can be played
+    if (videoRef.current) {
+      videoRef.current.onerror = () => setVideoError(true);
+      
+      // Also check via fetch to catch 404
+      fetch('/assets/videos/video-urban-natura.mp4', { method: 'HEAD' })
+        .then(response => {
+          if (!response.ok) setVideoError(true);
+        })
+        .catch(() => setVideoError(true));
+    }
+  }, []);
 
   return (
     <section className="relative h-screen min-h-[640px] flex items-center overflow-hidden bg-neutral-950">
 
-      {/* VIDEO BACKGROUND */}
+      {/* VIDEO/IMAGE BACKGROUND */}
       <div className="absolute inset-0 z-0">
-        <video
-          ref={videoRef}
-          autoPlay muted loop playsInline
-          className="w-full h-full object-cover opacity-40"
-          poster="https://images.unsplash.com/photo-1524704654690-b56c05c78a00?q=80&w=2070"
-        >
-          <source src="/assets/videos/video-urban-natura.mp4" type="video/mp4" />
-        </video>
+        {!videoError ? (
+          <video
+            ref={videoRef}
+            autoPlay muted loop playsInline
+            className="w-full h-full object-cover opacity-40"
+            poster={posterImage}
+            onError={() => setVideoError(true)}
+          >
+            <source src="/assets/videos/video-urban-natura.mp4" type="video/mp4" />
+          </video>
+        ) : (
+          <img 
+            src={fallbackImage}
+            alt="Underwater scene"
+            className="w-full h-full object-cover opacity-40"
+          />
+        )}
 
         {/* Multi-layer overlay para profundidad */}
         <div className="absolute inset-0 bg-gradient-to-b from-neutral-950/60 via-transparent to-neutral-950" />
@@ -99,6 +127,7 @@ const Hero = () => {
             <Link
               to="/categoria/acuarios"
               className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent-500 hover:bg-accent-400 text-neutral-950 font-semibold rounded-xl transition-all duration-300 shadow-glow-accent hover:shadow-glow-accent hover:scale-[1.02] text-base"
+              data-testid="hero-cta-catalog"
             >
               Explorar Catálogo
               <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
@@ -106,6 +135,7 @@ const Hero = () => {
             <Link
               to="/contacto"
               className="group inline-flex items-center justify-center gap-2 px-8 py-4 glass text-white font-medium rounded-xl transition-all duration-300 hover:border-white/20 text-base"
+              data-testid="hero-cta-contact"
             >
               <FiMapPin className="text-accent-400" />
               Visita la Tienda
