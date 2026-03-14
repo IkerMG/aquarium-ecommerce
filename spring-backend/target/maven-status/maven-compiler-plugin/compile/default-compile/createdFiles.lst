@@ -1,0 +1,10 @@
+com/urbanatura/repository/ProductRepository.class
+com/urbanatura/config/DataSeeder.class
+com/urbanatura/model/Product.class
+com/urbanatura/dto/ProductDTO.class
+com/urbanatura/UrbanNaturaApplication.class
+com/urbanatura/dto/PagedResponseDTO.class
+com/urbanatura/service/ProductService.class
+com/urbanatura/config/CorsConfig.class
+com/urbanatura/controller/ProductController.class
+com/urbanatura/dto/CategoryDTO.class
